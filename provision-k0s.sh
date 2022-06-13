@@ -2,7 +2,7 @@
 set -euxo pipefail
 
 # see https://github.com/kubernetes/minikube/releases
-k0s_version='1.23.6+k0s.2'
+k0s_version='1.23.7+k0s.0'
 
 # disable k0s telemetry.
 echo 'export DISABLE_TELEMETRY=true' >/etc/profile.d/disable-telemetry.sh
