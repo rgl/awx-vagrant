@@ -18,6 +18,7 @@ Vagrant.configure('2') do |config|
     config.vm.provision :shell, path: 'provision-k0s.sh'
     config.vm.provision :shell, path: 'provision-k0s-k8s.sh'
     config.vm.provision :shell, path: 'provision-buildkit.sh'
+    config.vm.provision :shell, path: 'provision-nerdctl.sh'
     config.vm.provision :shell, path: 'provision-awx.sh'
   end
 end
