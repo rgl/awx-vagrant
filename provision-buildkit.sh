@@ -21,7 +21,7 @@ root = "/var/lib/buildkit"
   enabled = true
   address = "/run/k0s/containerd.sock"
   #platforms = ["linux/amd64", "linux/arm64"]
-  namespace = "k8s"
+  namespace = "k8s.io"
   gc = true
 EOF
 cat >/etc/systemd/system/buildkit.socket <<'EOF'
