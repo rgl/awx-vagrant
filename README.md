@@ -161,3 +161,7 @@ and click the Launch (the rocket icon) button.
   * [quay.io/ansible/ansible-builder:latest](https://github.com/ansible/ansible-builder/blob/devel/Containerfile)
   * [quay.io/ansible/python-builder:latest](https://github.com/ansible/python-builder-image/blob/main/Containerfile)
   * [quay.io/ansible/python-base:latest](https://github.com/ansible/python-base-image/blob/main/Containerfile)
+
+## Alternatives
+
+* [Ansible Semaphore](https://github.com/ansible-semaphore/semaphore)
