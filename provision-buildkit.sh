@@ -17,6 +17,12 @@ install -d /etc/buildkit
 cat >/etc/buildkit/buildkitd.toml <<'EOF'
 root = "/var/lib/buildkit"
 
+[worker.oci]
+  enabled = false
+
+[worker.runc]
+  enabled = false
+
 [worker.containerd]
   enabled = true
   address = "/run/k0s/containerd.sock"
