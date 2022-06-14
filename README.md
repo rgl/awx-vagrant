@@ -156,3 +156,8 @@ and click the Launch (the rocket icon) button.
   * [Execution Environments](https://docs.ansible.com/automation-controller/latest/html/userguide/execution_environments.html)
 * [Ansible Builder](https://ansible-builder.readthedocs.io)
 * [Ansible Runner](https://ansible-runner.readthedocs.io)
+* Container images sources:
+  * [quay.io/ansible/ansible-runner:latest](https://github.com/ansible/ansible-runner/blob/devel/Dockerfile)
+  * [quay.io/ansible/ansible-builder:latest](https://github.com/ansible/ansible-builder/blob/devel/Containerfile)
+  * [quay.io/ansible/python-builder:latest](https://github.com/ansible/python-builder-image/blob/main/Containerfile)
+  * [quay.io/ansible/python-base:latest](https://github.com/ansible/python-base-image/blob/main/Containerfile)
