@@ -20,3 +20,6 @@ namespace = "k8s.io"
 EOF
 nerdctl version
 ln -s /usr/local/bin/nerdctl /usr/local/bin/docker # YMMV
+
+# install the bash completion script.
+nerdctl completion bash >/usr/share/bash-completion/completions/nerdctl
