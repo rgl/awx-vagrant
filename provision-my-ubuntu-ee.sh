@@ -15,4 +15,4 @@ dependencies:
   galaxy: requirements.yml
   python: requirements.txt
 EOF
-ansible-builder build -v 3 -t my-ubuntu-ee
+ansible-builder build --verbosity 3 --tag my-ubuntu-ee

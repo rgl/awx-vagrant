@@ -15,4 +15,4 @@ dependencies:
   galaxy: requirements.yml
   python: requirements.txt
 EOF
-ansible-builder build -v 3 -t my-windows-ee
+ansible-builder build --verbosity 3 --tag my-windows-ee
