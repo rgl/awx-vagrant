@@ -1,6 +1,6 @@
 # About
 
-My Ansible AWX playground.
+My [Ansible AWX](https://github.com/ansible/awx) playground.
 
 ## Usage (libvirt/ubuntu-20.04)
 
