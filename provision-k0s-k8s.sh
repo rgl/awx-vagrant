@@ -61,3 +61,8 @@ kubectl get storageclass
 
 # show version.
 kubectl version --short
+
+# kick the tires.
+kubectl run k0sk8sktt -q -i --rm --restart=Never --image-pull-policy=IfNotPresent --image=busybox -- sh <<'EOF'
+echo 'k0s k8s kubectl run: Hello World!'
+EOF

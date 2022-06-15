@@ -15,6 +15,7 @@ tar xf $tgz -C /usr/local
 rm $tgz
 install -d /etc/buildkit
 cat >/etc/buildkit/buildkitd.toml <<'EOF'
+#debug = true
 root = "/var/lib/buildkit"
 
 [worker.oci]
@@ -62,3 +63,23 @@ systemctl enable buildkit.service
 systemctl start buildkit
 buildkitd --version
 buildctl --version
+
+# kick the tires.
+bkktt='/tmp/buildkit-kick-the-tires'
+rm -rf $bkktt && mkdir $bkktt
+pushd $bkktt
+cat >Dockerfile <<'EOF'
+FROM busybox
+RUN echo 'buildkit build: Hello World!'
+EOF
+buildctl build \
+  --progress plain \
+  --frontend dockerfile.v0 \
+  --local context=. \
+  --local dockerfile=. \
+  --output type=image,name=bkktt \
+  --metadata-file bkktt.json
+ctr image rm bkktt
+cat bkktt.json
+popd
+rm -rf $bkktt
