@@ -1,0 +1,143 @@
+- hosts: localhost
+  gather_facts: false
+  become: false
+  tasks:
+    - name: Delete Demo Data
+      block:
+        - name: Delete the Demo Job Template
+          awx.awx.job_template:
+            name: Demo Job Template
+            organization: Default
+            inventory: Demo Inventory
+            state: absent
+        - name: Delete the Demo Project
+          awx.awx.project:
+            name: Demo Project
+            organization: Default
+            state: absent
+        - name: Delete the Demo Credential
+          awx.awx.credential:
+            name: Demo Credential
+            credential_type: Machine
+            state: absent
+        - name: Delete the Demo Inventory
+          awx.awx.inventory:
+            name: Demo Inventory
+            organization: Default
+            state: absent
+
+    - name: Create the My Lab Organization
+      # see https://github.com/ansible/awx/blob/21.1.0/awx_collection/plugins/modules/organization.py
+      awx.awx.organization:
+        name: My Lab
+
+    - name: Create the My Lab Inventory
+      # see https://github.com/ansible/awx/blob/21.1.0/awx_collection/plugins/modules/inventory.py
+      awx.awx.inventory:
+        name: My Lab
+        organization: My Lab
+
+    - name: Create the Vagrant Credential
+      # see https://github.com/ansible/awx/blob/21.1.0/awx_collection/plugins/modules/credential.py
+      awx.awx.credential:
+        name: Vagrant (Ubuntu My Lab)
+        organization: My Lab
+        credential_type: Machine
+        inputs:
+          username: vagrant
+          password: vagrant
+          become_method: sudo
+          become_username: vagrant
+          become_password: vagrant
+
+    - name: Create the Administrator Credential
+      # see https://github.com/ansible/awx/blob/21.1.0/awx_collection/plugins/modules/credential.py
+      awx.awx.credential:
+        name: Administrator (Windows My Lab)
+        organization: My Lab
+        credential_type: Machine
+        inputs:
+          username: Administrator
+          password: vagrant
+
+    - name: Create the My Ubuntu EE (latest) Execution Environment
+      # NB This image was built in provision-my-ubuntu-ee.sh.
+      # see https://github.com/ansible/awx/blob/21.1.0/awx_collection/plugins/modules/execution_environment.py
+      awx.awx.execution_environment:
+        name: My Ubuntu EE (latest)
+        organization: My Lab
+        image: my-ubuntu-ee:latest
+        pull: missing
+
+    - name: Create the My Windows EE (latest) Execution Environment
+      # NB This image was built in provision-my-windows-ee.sh.
+      # see https://github.com/ansible/awx/blob/21.1.0/awx_collection/plugins/modules/execution_environment.py
+      awx.awx.execution_environment:
+        name: My Windows EE (latest)
+        organization: My Lab
+        image: my-windows-ee:latest
+        pull: missing
+
+    - name: Create the My Ubuntu Project
+      # see https://github.com/ansible/awx/blob/21.1.0/awx_collection/plugins/modules/project.py
+      awx.awx.project:
+        name: My Ubuntu
+        organization: My Lab
+        default_environment: My Ubuntu EE (latest)
+        scm_type: git
+        scm_url: https://github.com/rgl/my-ubuntu-ansible-playbooks.git
+        scm_branch: main
+        scm_clean: true
+
+    - name: Create the My Windows Project
+      # see https://github.com/ansible/awx/blob/21.1.0/awx_collection/plugins/modules/project.py
+      awx.awx.project:
+        name: My Windows
+        organization: My Lab
+        default_environment: My Windows EE (latest)
+        scm_type: git
+        scm_url: https://github.com/rgl/my-windows-ansible-playbooks.git
+        scm_branch: main
+        scm_clean: true
+
+    - name: Create the My Ubuntu (development) Template
+      # see https://github.com/ansible/awx/blob/21.1.0/awx_collection/plugins/modules/job_template.py
+      awx.awx.job_template:
+        name: My Ubuntu (development)
+        organization: My Lab
+        inventory: My Lab
+        job_type: run
+        project: My Ubuntu
+        playbook: development.yml
+        credentials:
+          - Vagrant (Ubuntu My Lab)
+        become_enabled: true
+        use_fact_cache: true
+
+    - name: Create the My Windows (development) Template
+      # see https://github.com/ansible/awx/blob/21.1.0/awx_collection/plugins/modules/job_template.py
+      awx.awx.job_template:
+        name: My Windows (development)
+        organization: My Lab
+        inventory: My Lab
+        job_type: run
+        project: My Windows
+        playbook: development.yml
+        credentials:
+          - Administrator (Windows My Lab)
+        use_fact_cache: true
+        extra_vars:
+          ansible_connection: psrp
+          ansible_psrp_protocol: http
+          ansible_psrp_message_encryption: never
+          ansible_psrp_auth: credssp
+
+    - name: Populate the My Lab Iventory
+      block:
+        - name: Create the dm1 Host
+          # see https://github.com/ansible/awx/blob/21.1.0/awx_collection/plugins/modules/host.py
+          awx.awx.host:
+            name: dm1
+            inventory: My Lab
+            variables:
+              ansible_host: 192.168.1.77

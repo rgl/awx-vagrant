@@ -6,6 +6,8 @@ My [Ansible AWX](https://github.com/ansible/awx) playground.
 
 Install the [Ubuntu 20.04 Vagrant Box](https://github.com/rgl/ubuntu-vagrant).
 
+Review/Modify the [awx.yml playbook](playbooks/project/awx.yml).
+
 Bring up the `awx` vagrant environment (here it takes about 20m to be ready, but YMMV):
 
 ```bash
@@ -18,9 +20,15 @@ http://192.168.121.42:30080
 
 Use the `admin`/`admin` credentials.
 
-Follow the next inner sections to execute a playbook.
+Select one of the Templates and click their Launch (rocket icon) button to excute a playbook.
 
-### Add Execution Environments
+Follow the next section to manually configure AWX in a similar way as the [awx.yml playbook](playbooks/project/awx.yml).
+
+### Manual Configure AWX
+
+Follow the next inner sections to manually configure AWX and execute a playbook.
+
+#### Add Execution Environments
 
 Go to the `Administration`/`Execution Environments`/`Create new execution environment` page. For example:
 
@@ -42,7 +50,7 @@ Add a new Execution Environment with the following properties:
 
 **NB** This image was built in [`provision-my-windows-ee.sh`](provision-my-windows-ee.sh).
 
-### Add Inventory
+#### Add Inventory
 
 Go to the `Resources`/`Inventories`/`Create new inventory` page. For example:
 
@@ -63,7 +71,7 @@ Click the `Hosts` tab and add a new Host with the following properties:
 
 And repeat the process for all your hosts.
 
-### Add Credentials
+#### Add Credentials
 
 Go to the `Resources`/`Credentials`/`Create New Credential` page. For example:
 
@@ -71,7 +79,7 @@ http://192.168.121.42:30080/#/credentials/add
 
 Add a new Credential with the following properties:
 
-* Name: `vagrant (Ubuntu My Lab)`
+* Name: `Vagrant (Ubuntu My Lab)`
 * Credential Type: `Machine`
 * Username: `vagrant`
 * Password: `vagrant`
@@ -86,7 +94,7 @@ Add a new Credential with the following properties:
 * Username: `Administrator`
 * Password: `vagrant`
 
-### Add Projects
+#### Add Projects
 
 Go to the `Resources`/`Projects`/`Create New Project` page. For example:
 
@@ -110,7 +118,7 @@ Add a new Project with the following properties:
 * Source Control Branch/Tag/Commit: `main`
 * Options: `clean`
 
-### Add Templates
+#### Add Templates
 
 Go to the `Resources`/`Templates`/`Create New Job Template` page. For example:
 
@@ -122,7 +130,7 @@ Add a new Project with the following properties:
 * Inventory: `My Lab`
 * Project: `My Ubuntu`
 * Playbook: `development.yml`
-* Credentials: `vagrant (Ubuntu My Lab)`
+* Credentials: `Vagrant (Ubuntu My Lab)`
 * Options: `Privilege Escalation` and `Enable Fact Storage`
 
 Add a new Project with the following properties:
@@ -141,7 +149,7 @@ Add a new Project with the following properties:
     ```
 * Options: `Enable Fact Storage`
 
-### Execute Playbook
+#### Execute Playbook
 
 A Playbook is indirectly executed by Launching a Template.
 

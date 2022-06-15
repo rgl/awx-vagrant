@@ -23,5 +23,7 @@ Vagrant.configure('2') do |config|
     config.vm.provision :shell, path: 'provision-my-ubuntu-ee.sh'
     config.vm.provision :shell, path: 'provision-my-windows-ee.sh'
     config.vm.provision :shell, path: 'provision-awx.sh'
+    config.vm.provision :shell, path: 'playbooks/provision-my-awx-ee.sh'
+    config.vm.provision :shell, path: 'playbooks/run.sh'
   end
 end

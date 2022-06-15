@@ -1,0 +1,7 @@
+version: 1
+build_arg_defaults:
+  EE_BASE_IMAGE: quay.io/ansible/ansible-runner:latest     # TODO YOLO?
+  EE_BUILDER_IMAGE: quay.io/ansible/ansible-builder:latest # TODO YOLO?
+dependencies:
+  galaxy: requirements.yml
+  python: requirements.txt
