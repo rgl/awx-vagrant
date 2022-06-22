@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euxo pipefail
 
-# see https://github.com/kubernetes/minikube/releases
+# see https://github.com/k0sproject/k0s/releases
 k0s_version='1.23.7+k0s.0'
 
 # disable k0s telemetry.
