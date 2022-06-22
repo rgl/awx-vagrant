@@ -1,5 +1,5 @@
 collections:
   # see https://galaxy.ansible.com/awx/awx
-  # see https://github.com/ansible/awx/tree/21.1.0/awx_collection
+  # see https://github.com/ansible/awx/tree/21.2.0/awx_collection
   - name: awx.awx
-    version: 21.1.0
+    version: 21.2.0
