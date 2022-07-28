@@ -3,7 +3,7 @@ set -euxo pipefail
 
 # download.
 # see https://github.com/containerd/nerdctl/releases
-nerdctl_version='0.21.0'
+nerdctl_version='0.22.0'
 nerdctl_url="https://github.com/containerd/nerdctl/releases/download/v${nerdctl_version}/nerdctl-${nerdctl_version}-linux-amd64.tar.gz"
 tgz='/tmp/nerdctl.tgz'
 wget -qO $tgz "$nerdctl_url"
