@@ -2,7 +2,7 @@
 set -euxo pipefail
 
 # create the configuration file.
-# see https://docs.k0sproject.io/v1.23.7+k0s.0/configuration/
+# see https://docs.k0sproject.io/v1.24.2+k0s.0/configuration/
 install -d -m 700 /etc/k0s
 k0s config create >/etc/k0s/k0s.yaml
 python3 - <<'EOF'
