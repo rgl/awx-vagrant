@@ -2,7 +2,7 @@
 set -euxo pipefail
 
 # see https://github.com/helm/helm/releases
-helm_version='3.9.0'
+helm_version='3.9.2'
 
 # install helm.
 # see https://helm.sh/docs/intro/install/
