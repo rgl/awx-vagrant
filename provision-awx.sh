@@ -7,6 +7,10 @@ awx_version='21.3.0'
 # see https://github.com/ansible/awx-operator/releases
 awx_operator_chart_version='0.25.0'
 
+# settings.
+awx_namespace='awx'
+awx_name='awx-demo'
+
 # install the awx-operator.
 # see https://github.com/ansible/awx-operator#helm-install-on-existing-cluster
 # see https://ansible.github.io/awx-operator/index.yaml
@@ -16,15 +20,16 @@ helm repo add awx-operator https://ansible.github.io/awx-operator/
 helm repo update
 helm search repo awx-operator/awx-operator --versions | head -5
 helm show all --version $awx_operator_chart_version awx-operator/awx-operator
-helm upgrade --install \
+helm upgrade \
   awx-operator \
   awx-operator/awx-operator \
+  --install \
+  --create-namespace \
+  --namespace $awx_namespace \
   --version $awx_operator_chart_version
 
 # install the awx-demo awx instance.
 # see https://github.com/ansible/awx-operator/blob/0.25.0/config/crd/bases/awx.ansible.com_awxs.yaml
-awx_namespace='awx' # TODO should this be in a dedicated namespace?
-awx_name='awx-demo'
 kubectl apply -n $awx_namespace -f - <<EOF
 ---
 apiVersion: v1
