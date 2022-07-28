@@ -3,14 +3,14 @@ set -euxo pipefail
 
 # see https://github.com/ansible/awx/releases
 # TODO see how to use this in the AWX CRD.
-awx_version='21.2.0'
+awx_version='21.3.0'
 # see https://github.com/ansible/awx-operator/releases
-awx_operator_chart_version='0.23.0'
+awx_operator_chart_version='0.25.0'
 
 # install the awx-operator.
 # see https://github.com/ansible/awx-operator#helm-install-on-existing-cluster
 # see https://ansible.github.io/awx-operator/index.yaml
-#     https://github.com/ansible/awx-operator/releases/download/0.23.0/awx-operator-0.23.0.tgz
+#     https://github.com/ansible/awx-operator/releases/download/0.25.0/awx-operator-0.25.0.tgz
 # see helm search repo awx-operator
 helm repo add awx-operator https://ansible.github.io/awx-operator/
 helm repo update
@@ -22,7 +22,7 @@ helm upgrade --install \
   --version $awx_operator_chart_version
 
 # install the awx-demo awx instance.
-# see https://github.com/ansible/awx-operator/blob/0.23.0/config/crd/bases/awx.ansible.com_awxs.yaml
+# see https://github.com/ansible/awx-operator/blob/0.25.0/config/crd/bases/awx.ansible.com_awxs.yaml
 awx_namespace='awx' # TODO should this be in a dedicated namespace?
 awx_name='awx-demo'
 kubectl apply -n $awx_namespace -f - <<EOF
