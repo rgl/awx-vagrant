@@ -3,7 +3,7 @@ set -euxo pipefail
 
 # see https://github.com/ansible/awx/releases
 # TODO see how to use this in the AWX CRD.
-awx_version='21.3.0'
+awx_version='21.4.0'
 # see https://github.com/ansible/awx-operator/releases
 awx_operator_chart_version='0.25.0'
 
