@@ -27,18 +27,18 @@
             state: absent
 
     - name: Create the My Lab Organization
-      # see https://github.com/ansible/awx/blob/21.4.0/awx_collection/plugins/modules/organization.py
+      # see https://github.com/ansible/awx/blob/22.4.0/awx_collection/plugins/modules/organization.py
       awx.awx.organization:
         name: My Lab
 
     - name: Create the My Lab Inventory
-      # see https://github.com/ansible/awx/blob/21.4.0/awx_collection/plugins/modules/inventory.py
+      # see https://github.com/ansible/awx/blob/22.4.0/awx_collection/plugins/modules/inventory.py
       awx.awx.inventory:
         name: My Lab
         organization: My Lab
 
     - name: Create the Vagrant Credential
-      # see https://github.com/ansible/awx/blob/21.4.0/awx_collection/plugins/modules/credential.py
+      # see https://github.com/ansible/awx/blob/22.4.0/awx_collection/plugins/modules/credential.py
       awx.awx.credential:
         name: Vagrant (Ubuntu My Lab)
         organization: My Lab
@@ -51,7 +51,7 @@
           become_password: vagrant
 
     - name: Create the Administrator Credential
-      # see https://github.com/ansible/awx/blob/21.4.0/awx_collection/plugins/modules/credential.py
+      # see https://github.com/ansible/awx/blob/22.4.0/awx_collection/plugins/modules/credential.py
       awx.awx.credential:
         name: Administrator (Windows My Lab)
         organization: My Lab
@@ -62,7 +62,7 @@
 
     - name: Create the My Ubuntu EE (latest) Execution Environment
       # NB This image was built in provision-my-ubuntu-ee.sh.
-      # see https://github.com/ansible/awx/blob/21.4.0/awx_collection/plugins/modules/execution_environment.py
+      # see https://github.com/ansible/awx/blob/22.4.0/awx_collection/plugins/modules/execution_environment.py
       awx.awx.execution_environment:
         name: My Ubuntu EE (latest)
         organization: My Lab
@@ -71,7 +71,7 @@
 
     - name: Create the My Windows EE (latest) Execution Environment
       # NB This image was built in provision-my-windows-ee.sh.
-      # see https://github.com/ansible/awx/blob/21.4.0/awx_collection/plugins/modules/execution_environment.py
+      # see https://github.com/ansible/awx/blob/22.4.0/awx_collection/plugins/modules/execution_environment.py
       awx.awx.execution_environment:
         name: My Windows EE (latest)
         organization: My Lab
@@ -79,7 +79,7 @@
         pull: missing
 
     - name: Create the My Ubuntu Project
-      # see https://github.com/ansible/awx/blob/21.4.0/awx_collection/plugins/modules/project.py
+      # see https://github.com/ansible/awx/blob/22.4.0/awx_collection/plugins/modules/project.py
       awx.awx.project:
         name: My Ubuntu
         organization: My Lab
@@ -90,7 +90,7 @@
         scm_clean: true
 
     - name: Create the My Windows Project
-      # see https://github.com/ansible/awx/blob/21.4.0/awx_collection/plugins/modules/project.py
+      # see https://github.com/ansible/awx/blob/22.4.0/awx_collection/plugins/modules/project.py
       awx.awx.project:
         name: My Windows
         organization: My Lab
@@ -101,7 +101,7 @@
         scm_clean: true
 
     - name: Create the My Ubuntu (development) Template
-      # see https://github.com/ansible/awx/blob/21.4.0/awx_collection/plugins/modules/job_template.py
+      # see https://github.com/ansible/awx/blob/22.4.0/awx_collection/plugins/modules/job_template.py
       awx.awx.job_template:
         name: My Ubuntu (development)
         organization: My Lab
@@ -115,7 +115,7 @@
         use_fact_cache: true
 
     - name: Create the My Windows (development) Template
-      # see https://github.com/ansible/awx/blob/21.4.0/awx_collection/plugins/modules/job_template.py
+      # see https://github.com/ansible/awx/blob/22.4.0/awx_collection/plugins/modules/job_template.py
       awx.awx.job_template:
         name: My Windows (development)
         organization: My Lab
@@ -132,10 +132,10 @@
           ansible_psrp_message_encryption: never
           ansible_psrp_auth: credssp
 
-    - name: Populate the My Lab Iventory
+    - name: Populate the My Lab Inventory
       block:
         - name: Create the dm1 Host
-          # see https://github.com/ansible/awx/blob/21.4.0/awx_collection/plugins/modules/host.py
+          # see https://github.com/ansible/awx/blob/22.4.0/awx_collection/plugins/modules/host.py
           awx.awx.host:
             name: dm1
             inventory: My Lab
