@@ -2,9 +2,9 @@
 
 My [Ansible AWX](https://github.com/ansible/awx) playground.
 
-## Usage (libvirt/ubuntu-20.04)
+## Usage (libvirt/ubuntu-22.04)
 
-Install the [Ubuntu 20.04 Vagrant Box](https://github.com/rgl/ubuntu-vagrant).
+Install the [Ubuntu 22.04 Vagrant Box](https://github.com/rgl/ubuntu-vagrant).
 
 Review/Modify the [awx.yml playbook](playbooks/project/awx.yml).
 
