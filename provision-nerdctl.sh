@@ -3,6 +3,7 @@ set -euxo pipefail
 
 # download.
 # see https://github.com/containerd/nerdctl/releases
+# renovate: datasource=github-releases depName=containerd/nerdctl
 nerdctl_version='0.22.2'
 nerdctl_url="https://github.com/containerd/nerdctl/releases/download/v${nerdctl_version}/nerdctl-${nerdctl_version}-linux-amd64.tar.gz"
 tgz='/tmp/nerdctl.tgz'

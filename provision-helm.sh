@@ -2,6 +2,7 @@
 set -euxo pipefail
 
 # see https://github.com/helm/helm/releases
+# renovate: datasource=github-releases depName=helm/helm
 helm_version='3.9.2'
 
 # install helm.

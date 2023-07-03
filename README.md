@@ -24,6 +24,13 @@ Select one of the Templates and click their Launch (rocket icon) button to excut
 
 Follow the next section to manually configure AWX in a similar way as the [awx.yml playbook](playbooks/project/awx.yml).
 
+List this repository dependencies (and which have newer versions):
+
+```bash
+export GITHUB_COM_TOKEN='YOUR_GITHUB_PERSONAL_TOKEN'
+./renovate.sh
+```
+
 ### Manual Configure AWX
 
 Follow the next inner sections to manually configure AWX and execute a playbook.

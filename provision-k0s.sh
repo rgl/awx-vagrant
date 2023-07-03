@@ -2,6 +2,7 @@
 set -euxo pipefail
 
 # see https://github.com/k0sproject/k0s/releases
+# renovate: datasource=github-releases depName=k0sproject/k0s
 k0s_version='1.24.2+k0s.0'
 
 # disable k0s telemetry.

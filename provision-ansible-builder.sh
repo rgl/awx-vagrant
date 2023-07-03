@@ -3,6 +3,7 @@ set -euxo pipefail
 
 # see https://pypi.org/project/ansible-builder/
 # see https://ansible-builder.readthedocs.io/en/stable/
+# renovate: datasource=pypi depName=ansible-builder
 ansible_builder_version='1.1.0'
 
 # install.
