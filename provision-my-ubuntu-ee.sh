@@ -5,27 +5,39 @@ if [ ! -d my-ubuntu-ansible-playbooks ]; then
   git clone https://github.com/rgl/my-ubuntu-ansible-playbooks.git
 fi
 
+# see https://pypi.org/project/ansible-runner/
+# see https://github.com/ansible/ansible-runner
+# renovate: datasource=pypi depName=ansible-runner
+ansible_runner_version='2.4.0'
+
 # build.
 cd my-ubuntu-ansible-playbooks
-# remove the ansible-lint dependency.
-# NB without this, the execution environment build fails with:
-#     ERROR: Cannot install -r /tmp/src/requirements.txt (line 10) and jsonschema==3.2.0 because these package versions have conflicting dependencies.
-#     The conflict is caused by:
-#       The user requested jsonschema==3.2.0
-#       ansible-lint 6.3.0 depends on jsonschema>=4.6.0
-sed -i -E '/^ansible-lint=.+/d' requirements.txt
 # define the execution environment.
-cat >execution-environment.yml <<'EOF'
-version: 1
-build_arg_defaults:
-  EE_BASE_IMAGE: quay.io/ansible/ansible-runner:latest     # TODO YOLO?
-  EE_BUILDER_IMAGE: quay.io/ansible/ansible-builder:latest # TODO YOLO?
+# see https://ansible.readthedocs.io/projects/builder/en/stable/definition/
+cat >execution-environment.yml <<EOF
+version: 3
+images:
+  base_image:
+    name: registry.fedoraproject.org/fedora:41
+additional_build_steps:
+  prepend_base:
+    - >
+      RUN dnf install -y
+      python3-pip
+      openssh-clients
+      sshpass
 dependencies:
+  ansible_core:
+    package_pip: $(grep -E ^ansible-core== requirements.txt)
+  ansible_runner:
+    package_pip: ansible-runner==$ansible_runner_version
   galaxy: requirements.yml
   python: requirements.txt
 EOF
 # build the execution environment.
 ansible-builder build --verbosity 3 --tag my-ubuntu-ee
+# show the built execution environment image.
+nerdctl image list my-ubuntu-ee
 
 # show information about the built execution environment.
 # see https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#run

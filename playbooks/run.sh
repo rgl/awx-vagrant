@@ -26,5 +26,7 @@ nerdctl run \
     -v "$PWD:/runner" \
     -v /tmp/runner/artifacts:/runner/artifacts \
     -v /etc/tower:/etc/tower:ro \
-    -e RUNNER_PLAYBOOK=awx.yml \
-    my-awx-ee
+    -w /runner/project \
+    my-awx-ee \
+    ansible-playbook \
+    awx.yml

@@ -2,7 +2,7 @@
 set -euxo pipefail
 
 # create the configuration file.
-# see https://docs.k0sproject.io/v1.24.2+k0s.0/configuration/
+# see https://docs.k0sproject.io/v1.32.1+k0s.0/configuration/
 install -d -m 700 /etc/k0s
 k0s config create >/etc/k0s/k0s.yaml
 python3 - <<'EOF'
@@ -17,9 +17,59 @@ config_orig = open(config_path, 'r', encoding='utf-8').read()
 document = yaml.load(config_orig, Loader=yaml.FullLoader)
 
 # modify config.
-document['spec']['extensions']['storage'] = {
-  'type': 'openebs_local_storage',
+document['spec']['extensions']['helm'] = {
+  'repositories': [],
+  'charts': [],
 }
+# install openebs.
+# see https://artifacthub.io/packages/helm/openebs/openebs
+# see https://github.com/openebs/openebs/tree/v4.1.3/charts
+# see https://github.com/openebs/openebs
+# see https://docs.k0sproject.io/v1.32.1+k0s.0/examples/openebs/
+# see https://docs.k0sproject.io/v1.32.1+k0s.0/helm-charts/
+# renovate: datasource=helm depName=openebs registryUrl=https://openebs.github.io/openebs
+openebs_version = '4.1.3'
+document['spec']['extensions']['helm']['repositories'].append({
+  'name': 'openebs',
+  'url': 'https://openebs.github.io/openebs',
+})
+document['spec']['extensions']['helm']['charts'].append({
+  'chartname': 'openebs/openebs',
+  'version': openebs_version,
+  'namespace': 'openebs',
+  'name': 'openebs',
+  'order': 1,
+  'values': yaml.dump({
+    'localpv-provisioner': {
+      'hostpathClass': {
+        'enabled': True,
+        'isDefaultClass': True,
+      },
+    },
+    'engines': {
+      'local': {
+        'lvm': {
+          'enabled': False,
+        },
+        'zfs': {
+          'enabled': False,
+        },
+      },
+      'replicated': {
+        'mayastor': {
+          'enabled': False,
+        },
+      },
+    },
+  })
+})
+
+# configure yaml to use the literal block scalar style without chomping.
+def str_presenter(dumper, data):
+  if '\n' in data:
+    return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='|')
+  return dumper.represent_scalar('tag:yaml.org,2002:str', data)
+yaml.add_representer(str, str_presenter)
 
 # show diff.
 config_stream = io.StringIO()
@@ -30,7 +80,7 @@ sys.stdout.writelines(difflib.unified_diff(config_orig.splitlines(1), config.spl
 # save config.
 open(config_path, 'w', encoding='utf-8').write(config)
 EOF
-k0s config validate /etc/k0s/k0s.yaml
+k0s config validate --config /etc/k0s/k0s.yaml
 
 # install as service.
 k0s install controller --single --config /etc/k0s/k0s.yaml
@@ -53,14 +103,13 @@ kubectl get deployments --all-namespaces -o json | jq -r '.items[].metadata | [.
   kubectl -n "$ns" rollout status deployment "$deployment_name"
 done
 
-# mark openebs-hostpath as the default storageclass.
-# see https://kubernetes.io/docs/tasks/administer-cluster/change-default-storage-class/
+# wait for the openebs-hostpath storageclass to be available.
+# see kubectl get -n kube-system chart/k0s-addon-chart-openebs -o yaml
 $SHELL -c 'while ! kubectl get storageclass openebs-hostpath >/dev/null 2>&1; do sleep 3; done'
-kubectl patch storageclass openebs-hostpath -p '{"metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 kubectl get storageclass
 
 # show version.
-kubectl version --short
+kubectl version --client
 
 # kick the tires.
 kubectl run k0sk8sktt -q -i --rm --restart=Never --image-pull-policy=IfNotPresent --image=busybox -- sh <<'EOF'

@@ -3,9 +3,12 @@ set -euxo pipefail
 
 # see https://github.com/ansible/awx/releases
 # TODO see how to use this in the AWX CRD.
-awx_version='22.4.0'
+# renovate: datasource=github-releases depName=ansible/awx
+awx_version='24.6.1'
+# see https://ansible-community.github.io/awx-operator-helm/
 # see https://github.com/ansible/awx-operator/releases
-awx_operator_chart_version='0.25.0'
+# renovate: datasource=github-releases depName=ansible/awx-operator
+awx_operator_chart_version='2.19.1'
 
 # settings.
 awx_namespace='awx'
@@ -13,10 +16,10 @@ awx_name='awx-demo'
 
 # install the awx-operator.
 # see https://github.com/ansible/awx-operator#helm-install-on-existing-cluster
-# see https://ansible.github.io/awx-operator/index.yaml
-#     https://github.com/ansible/awx-operator/releases/download/0.25.0/awx-operator-0.25.0.tgz
+# see https://ansible-community.github.io/awx-operator-helm/index.yaml
+#     https://github.com/ansible/awx-operator/releases/download/2.19.1/awx-operator-2.19.1.tgz
 # see helm search repo awx-operator
-helm repo add awx-operator https://ansible.github.io/awx-operator/
+helm repo add awx-operator https://ansible-community.github.io/awx-operator-helm/
 helm repo update
 helm search repo awx-operator/awx-operator --versions | head -5
 helm show all --version $awx_operator_chart_version awx-operator/awx-operator
@@ -29,7 +32,7 @@ helm upgrade \
   --version $awx_operator_chart_version
 
 # install the awx-demo awx instance.
-# see https://github.com/ansible/awx-operator/blob/0.25.0/config/crd/bases/awx.ansible.com_awxs.yaml
+# see https://github.com/ansible/awx-operator/blob/2.19.1/config/crd/bases/awx.ansible.com_awxs.yaml
 kubectl apply -n $awx_namespace -f - <<EOF
 ---
 apiVersion: v1
@@ -45,6 +48,7 @@ metadata:
   name: $awx_name
 spec:
   service_type: NodePort
+  nodeport_port: 30080
 EOF
 
 # wait for awx to be available.

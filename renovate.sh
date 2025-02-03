@@ -9,28 +9,27 @@ set -euo pipefail
 export RENOVATE_USERNAME='renovate'
 export RENOVATE_NAME='Renovate Bot'
 export RENOVATE_PASSWORD='password'
-export RENOVATE_ENDPOINT="http://localhost:3000"
-export GIT_PUSH_REPOSITORY="http://$RENOVATE_USERNAME:$RENOVATE_PASSWORD@localhost:3000/$RENOVATE_USERNAME/test.git"
 gitea_container_name="$(basename "$(dirname "$(realpath "${BASH_SOURCE[0]}")")")-renovate-gitea"
 
 # see https://hub.docker.com/r/gitea/gitea/tags
 # renovate: datasource=docker depName=gitea/gitea
-gitea_version='1.19.3'
+gitea_version='1.23.1'
 
 # see https://hub.docker.com/r/renovate/renovate/tags
-# renovate: datasource=docker depName=renovate/renovate extractVersion=(?<version>.+)-slim$
-renovate_version='35.147.0'
+# renovate: datasource=docker depName=renovate/renovate
+renovate_version='39.156.0'
 
 # clean.
 echo 'Deleting existing Gitea...'
 docker rm --force "$gitea_container_name" >/dev/null 2>&1
 echo 'Deleting existing temporary files...'
 rm -f tmp/renovate-*
+install -d tmp
 
 # start gitea in background.
 # see https://docs.gitea.io/en-us/config-cheat-sheet/
 # see https://github.com/go-gitea/gitea/releases
-# see https://github.com/go-gitea/gitea/blob/v1.19.3/docker/root/etc/s6/gitea/setup
+# see https://github.com/go-gitea/gitea/blob/v1.23.1/docker/root/etc/s6/gitea/setup
 echo 'Starting Gitea...'
 docker run \
     --detach \
@@ -38,11 +37,17 @@ docker run \
     -v /etc/timezone:/etc/timezone:ro \
     -v /etc/localtime:/etc/localtime:ro \
     -e SECRET_KEY=abracadabra \
-    -p 3000:3000 \
+    -p 3000 \
     "gitea/gitea:$gitea_version" \
     >/dev/null
+gitea_addr="$(docker port "$gitea_container_name" 3000 | head -1)"
+gitea_url="http://$gitea_addr"
+export RENOVATE_ENDPOINT="$gitea_url"
+export GIT_PUSH_REPOSITORY="http://$RENOVATE_USERNAME:$RENOVATE_PASSWORD@$gitea_addr/$RENOVATE_USERNAME/test.git"
+
 # wait for gitea to be ready.
-bash -euc 'while [ -z "$(wget -qO- http://localhost:3000/api/v1/version | jq -r ".version | select(.!=null)")" ]; do sleep 5; done'
+echo "Waiting for Gitea to be ready at $gitea_url..."
+GITEA_URL="$gitea_url" bash -euc 'while [ -z "$(wget -qO- "$GITEA_URL/api/v1/version" | jq -r ".version | select(.!=null)")" ]; do sleep 5; done'
 
 # create user in gitea.
 echo "Creating Gitea $RENOVATE_USERNAME user..."
@@ -52,13 +57,15 @@ docker exec --user git "$gitea_container_name" gitea admin user create \
     --username "$RENOVATE_USERNAME" \
     --password "$RENOVATE_PASSWORD"
 curl \
-    -s \
+    --silent \
+    --show-error \
+    --fail-with-body \
     -u "$RENOVATE_USERNAME:$RENOVATE_PASSWORD" \
     -X 'PATCH' \
     -H 'Accept: application/json' \
     -H 'Content-Type: application/json' \
     -d "{\"full_name\":\"$RENOVATE_NAME\"}" \
-    "http://localhost:3000/api/v1/user/settings" \
+    "$gitea_url/api/v1/user/settings" \
     | jq \
     > /dev/null
 
@@ -67,37 +74,44 @@ curl \
 # see https://docs.gitea.io/en-us/oauth2-provider/#scopes
 # see https://try.gitea.io/api/swagger#/user/userCreateToken
 echo "Creating Gitea $RENOVATE_USERNAME user personal access token..."
-install -d tmp
 curl \
-    -s \
+    --silent \
+    --show-error \
+    --fail-with-body \
     -u "$RENOVATE_USERNAME:$RENOVATE_PASSWORD" \
     -X POST \
     -H "Content-Type: application/json" \
-    -d '{"name": "renovate", "scopes": ["repo"]}' \
-    "http://localhost:3000/api/v1/users/$RENOVATE_USERNAME/tokens" \
+    -d '{"name": "renovate", "scopes": ["read:user", "write:issue", "write:repository"]}' \
+    "$gitea_url/api/v1/users/$RENOVATE_USERNAME/tokens" \
     | jq -r .sha1 \
     >tmp/renovate-gitea-token.txt
 
 # try the token.
-export RENOVATE_TOKEN="$(cat tmp/renovate-gitea-token.txt)"
+echo "Trying the Gitea $RENOVATE_USERNAME user personal access token..."
+RENOVATE_TOKEN="$(cat tmp/renovate-gitea-token.txt)"
+export RENOVATE_TOKEN
 curl \
-    -s \
+    --silent \
+    --show-error \
+    --fail-with-body \
     -H "Authorization: token $RENOVATE_TOKEN" \
     -H 'Accept: application/json' \
-    "http://localhost:3000/api/v1/user" \
+    "$gitea_url/api/v1/version" \
     | jq \
     > /dev/null
 
 # create remote repository in gitea.
 echo "Creating Gitea $RENOVATE_USERNAME test repository..."
 curl \
-    -s \
+    --silent \
+    --show-error \
+    --fail-with-body \
     -u "$RENOVATE_USERNAME:$RENOVATE_PASSWORD" \
     -X POST \
     -H 'Accept: application/json' \
     -H 'Content-Type: application/json' \
     -d '{"name": "test"}' \
-    http://localhost:3000/api/v1/user/repos \
+    "$gitea_url/api/v1/user/repos" \
     | jq \
     > /dev/null
 
@@ -112,7 +126,8 @@ git push --force "$GIT_PUSH_REPOSITORY"
 # see https://github.com/renovatebot/renovate/blob/main/docs/usage/examples/self-hosting.md
 # see https://github.com/renovatebot/renovate/tree/main/lib/modules/datasource
 # see https://github.com/renovatebot/renovate/tree/main/lib/modules/versioning
-export RENOVATE_TOKEN="$(cat tmp/renovate-gitea-token.txt)"
+RENOVATE_TOKEN="$(cat tmp/renovate-gitea-token.txt)"
+export RENOVATE_TOKEN
 # NB these can also be passed as raw positional arguments to docker run.
 export RENOVATE_REPOSITORIES="$RENOVATE_USERNAME/test"
 # see https://docs.github.com/en/rest/rate-limit#get-rate-limit-status-for-the-authenticated-user
@@ -125,7 +140,18 @@ export RENOVATE_REPOSITORIES="$RENOVATE_USERNAME/test"
 export RENOVATE_PR_HOURLY_LIMIT='0'
 export RENOVATE_PR_CONCURRENT_LIMIT='0'
 echo 'Running renovate...'
-install -d tmp
+# NB to capture the traffic using mitmproxy, start mitmweb in a different
+#    shell, then enable the following if (i.e. true).
+docker_extra_args=()
+if false; then
+    docker_extra_args+=(
+        --env http_proxy=http://127.0.0.1:8080
+        --env https_proxy=http://127.0.0.1:8080
+        --env no_proxy=
+        --env SSL_CERT_FILE=/usr/local/shared/ca-certificates/mitmproxy-ca.crt
+        --volume "$HOME/.mitmproxy/mitmproxy-ca-cert.pem:/usr/local/shared/ca-certificates/mitmproxy-ca.crt:ro"
+    )
+fi
 # NB use --dry-run=lookup for not modifying the repository (e.g. for not
 #    creating pull requests).
 docker run \
@@ -141,7 +167,8 @@ docker run \
   --env RENOVATE_PR_CONCURRENT_LIMIT \
   --env LOG_LEVEL=debug \
   --env LOG_FORMAT=json \
-  "renovate/renovate:$renovate_version-slim" \
+  "${docker_extra_args[@]}" \
+  "renovate/renovate:$renovate_version" \
   --platform=gitea \
   --git-url=endpoint \
   >tmp/renovate-log.json
@@ -195,4 +222,4 @@ show-dependencies 'Dependencies' tmp/renovate-dependencies.json
 show-dependencies 'Dependencies Updates' tmp/renovate-dependencies-updates.json
 
 # show the gitea project.
-show-title "See PRs at http://localhost:3000/$RENOVATE_USERNAME/test/pulls (you can login as $RENOVATE_USERNAME:$RENOVATE_PASSWORD)"
+show-title "See PRs at $gitea_url/$RENOVATE_USERNAME/test/pulls (you can login as $RENOVATE_USERNAME:$RENOVATE_PASSWORD)"

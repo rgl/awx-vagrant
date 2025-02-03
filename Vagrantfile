@@ -22,6 +22,7 @@ Vagrant.configure('2') do |config|
     config.vm.provision :shell, path: 'provision-resize-disk.sh'
     config.vm.provision :shell, path: 'provision-base.sh'
     config.vm.provision :shell, path: 'provision-helm.sh'
+    config.vm.provision :shell, path: 'provision-k9s.sh'
     config.vm.provision :shell, path: 'provision-k0s.sh'
     config.vm.provision :shell, path: 'provision-k0s-k8s.sh'
     config.vm.provision :shell, path: 'provision-buildkit.sh'

@@ -179,4 +179,4 @@ and click the Launch (the rocket icon) button.
 
 ## Alternatives
 
-* [Ansible Semaphore](https://github.com/ansible-semaphore/semaphore)
+* [Semaphore UI](https://github.com/semaphoreui/semaphore)
