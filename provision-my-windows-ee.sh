@@ -10,6 +10,10 @@ fi
 # renovate: datasource=pypi depName=ansible-runner
 ansible_runner_version='2.4.1'
 
+# see https://quay.io/repository/fedora/fedora?tab=tags
+# renovate: datasource=docker depName=fedora registryUrl=https://registry.fedoraproject.org
+fedora_image_version='42'
+
 # build.
 cd my-windows-ansible-playbooks
 # define the execution environment.
@@ -18,7 +22,7 @@ cat >execution-environment.yml <<EOF
 version: 3
 images:
   base_image:
-    name: registry.fedoraproject.org/fedora:41
+    name: registry.fedoraproject.org/fedora:$fedora_image_version
 additional_build_steps:
   prepend_base:
     - >
