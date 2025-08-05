@@ -2,7 +2,7 @@
 set -euxo pipefail
 
 # create the configuration file.
-# see https://docs.k0sproject.io/v1.32.1+k0s.0/configuration/
+# see https://docs.k0sproject.io/v1.33.3+k0s.0/configuration/
 install -d -m 700 /etc/k0s
 k0s config create >/etc/k0s/k0s.yaml
 python3 - <<'EOF'
@@ -23,12 +23,12 @@ document['spec']['extensions']['helm'] = {
 }
 # install openebs.
 # see https://artifacthub.io/packages/helm/openebs/openebs
-# see https://github.com/openebs/openebs/tree/v4.1.3/charts
+# see https://github.com/openebs/openebs/tree/v4.3.2/charts
 # see https://github.com/openebs/openebs
-# see https://docs.k0sproject.io/v1.32.1+k0s.0/examples/openebs/
-# see https://docs.k0sproject.io/v1.32.1+k0s.0/helm-charts/
+# see https://docs.k0sproject.io/v1.33.3+k0s.0/examples/openebs/
+# see https://docs.k0sproject.io/v1.33.3+k0s.0/helm-charts/
 # renovate: datasource=helm depName=openebs registryUrl=https://openebs.github.io/openebs
-openebs_version = '4.1.3'
+openebs_version = '4.3.2'
 document['spec']['extensions']['helm']['repositories'].append({
   'name': 'openebs',
   'url': 'https://openebs.github.io/openebs',
@@ -45,6 +45,15 @@ document['spec']['extensions']['helm']['charts'].append({
         'enabled': True,
         'isDefaultClass': True,
       },
+    },
+    'minio': {
+      'enabled': False,
+    },
+    'loki': {
+      'enabled': False,
+    },
+    'alloy': {
+      'enabled': False,
     },
     'engines': {
       'local': {

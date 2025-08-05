@@ -20,7 +20,7 @@ http://192.168.121.42:30080
 
 Use the `admin`/`admin` credentials.
 
-Select one of the Templates and click their Launch (rocket icon) button to excute a playbook.
+Select one of the Templates and click their Launch (rocket icon) button to execute a playbook.
 
 Follow the next section to manually configure AWX in a similar way as the [awx.yml playbook](playbooks/project/awx.yml).
 

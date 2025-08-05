@@ -8,7 +8,7 @@ fi
 # see https://pypi.org/project/ansible-runner/
 # see https://github.com/ansible/ansible-runner
 # renovate: datasource=pypi depName=ansible-runner
-ansible_runner_version='2.4.0'
+ansible_runner_version='2.4.1'
 
 # build.
 cd my-ubuntu-ansible-playbooks
