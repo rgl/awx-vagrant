@@ -57,6 +57,7 @@ $SHELL -c "while ! kubectl get service -n awx $awx_name-service >/dev/null 2>&1;
 node_ip_address="$(ip addr show dev eth0 | perl -ne '/inet (.+?)\// && print $1')"
 node_port="$(kubectl get service -n awx $awx_name-service -o json | jq -r '.spec.ports[] | .nodePort')"
 service_url="http://$node_ip_address:$node_port"
+echo "$service_url" >/vagrant/tmp/awx-url.txt
 $SHELL -c "until kubectl get -n $awx_namespace awx/$awx_name -o jsonpath='{.status.conditions[?(@.type==\"Running\")].status},{.status.conditions[?(@.type==\"Successful\")].status}' | grep -q 'True,True'; do sleep 15; done"
 $SHELL -c "while ! wget -q --user admin --password admin --spider $service_url/api/v2/ping/; do sleep 3; done;"
 echo "AWX demo running at $service_url"

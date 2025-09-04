@@ -14,19 +14,21 @@ Bring up the `awx` vagrant environment (here it takes about 20m to be ready, but
 time vagrant up --provider=libvirt --no-destroy-on-error --no-tty
 ```
 
-Access AWX at the returned endpoint. For example, at:
+Access AWX as `admin`:`admin`:
 
-http://192.168.121.42:30080
-
-Use the `admin`/`admin` credentials.
+```bash
+xdg-open "$(cat tmp/awx-url.txt)"
+```
 
 Select one of the Templates and click their Launch (rocket icon) button to execute a playbook.
 
 Follow the next section to manually configure AWX in a similar way as the [awx.yml playbook](playbooks/project/awx.yml).
 
-Access the AWX REST API Browser. For example, at:
+Access the AWX REST API Browser:
 
-http://192.168.121.42:30080/api/
+```bash
+xdg-open "$(cat tmp/awx-url.txt)/api/"
+```
 
 The API schema swagger document is available at:
 
@@ -45,9 +47,11 @@ Follow the next inner sections to manually configure AWX and execute a playbook.
 
 #### Add Execution Environments
 
-Go to the `Administration`/`Execution Environments`/`Create new execution environment` page. For example:
+Go to the `Administration`/`Execution Environments`/`Create new execution environment` page:
 
-http://192.168.121.42:30080/#/execution_environments/add
+```bash
+xdg-open "$(cat tmp/awx-url.txt)/#/execution_environments/add"
+```
 
 Add a new Execution Environment with the following properties:
 
@@ -67,9 +71,11 @@ Add a new Execution Environment with the following properties:
 
 #### Add Inventory
 
-Go to the `Resources`/`Inventories`/`Create new inventory` page. For example:
+Go to the `Resources`/`Inventories`/`Create new inventory` page:
 
-http://192.168.121.42:30080/#/inventories/inventory/add
+```bash
+xdg-open "$(cat tmp/awx-url.txt)/#/inventories/inventory/add"
+```
 
 Add a new Inventory with the following properties:
 
@@ -81,16 +87,18 @@ Click the `Hosts` tab and add a new Host with the following properties:
 * Variables YAML:
     ```yaml
     ---
-    ansible_host: 192.168.1.77
+    ansible_host: 192.168.8.11
     ```
 
 And repeat the process for all your hosts.
 
 #### Add Credentials
 
-Go to the `Resources`/`Credentials`/`Create New Credential` page. For example:
+Go to the `Resources`/`Credentials`/`Create New Credential` page:
 
-http://192.168.121.42:30080/#/credentials/add
+```bash
+xdg-open "$(cat tmp/awx-url.txt)/#/credentials/add"
+```
 
 Add a new Credential with the following properties:
 
@@ -111,9 +119,11 @@ Add a new Credential with the following properties:
 
 #### Add Projects
 
-Go to the `Resources`/`Projects`/`Create New Project` page. For example:
+Go to the `Resources`/`Projects`/`Create New Project` page:
 
-http://192.168.121.42:30080/#/projects/add
+```bash
+xdg-open "$(cat tmp/awx-url.txt)/#/projects/add"
+```
 
 Add a new Project with the following properties:
 
@@ -135,9 +145,11 @@ Add a new Project with the following properties:
 
 #### Add Templates
 
-Go to the `Resources`/`Templates`/`Create New Job Template` page. For example:
+Go to the `Resources`/`Templates`/`Create New Job Template` page:
 
-http://192.168.121.42:30080/#/templates/job_template/add
+```bash
+xdg-open "$(cat tmp/awx-url.txt)/#/templates/job_template/add"
+```
 
 Add a new Project with the following properties:
 

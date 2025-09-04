@@ -159,4 +159,4 @@
             name: dm1
             inventory: My Lab
             variables:
-              ansible_host: 192.168.1.11
+              ansible_host: 192.168.8.11
