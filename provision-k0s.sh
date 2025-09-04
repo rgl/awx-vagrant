@@ -3,7 +3,7 @@ set -euxo pipefail
 
 # see https://github.com/k0sproject/k0s/releases
 # renovate: datasource=github-releases depName=k0sproject/k0s
-k0s_version='1.33.3+k0s.0'
+k0s_version='1.33.4+k0s.0'
 
 # disable k0s telemetry.
 echo 'export DISABLE_TELEMETRY=true' >/etc/profile.d/disable-telemetry.sh

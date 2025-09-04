@@ -6,9 +6,10 @@ set -euxo pipefail
 # renovate: datasource=github-releases depName=ansible/awx
 awx_version='24.6.1'
 # see https://ansible-community.github.io/awx-operator-helm/
-# see https://github.com/ansible/awx-operator/releases
-# renovate: datasource=github-releases depName=ansible/awx-operator
-awx_operator_chart_version='2.19.1'
+# see https://ansible-community.github.io/awx-operator-helm/index.yaml
+# see https://github.com/ansible-community/awx-operator-helm
+# renovate: datasource=helm depName=awx-operator registryUrl=https://ansible-community.github.io/awx-operator-helm/
+awx_operator_chart_version='3.2.0' # app version: 24.6.1
 
 # settings.
 awx_namespace='awx'
@@ -17,7 +18,6 @@ awx_name='awx-demo'
 # install the awx-operator.
 # see https://github.com/ansible/awx-operator#helm-install-on-existing-cluster
 # see https://ansible-community.github.io/awx-operator-helm/index.yaml
-#     https://github.com/ansible/awx-operator/releases/download/2.19.1/awx-operator-2.19.1.tgz
 # see helm search repo awx-operator
 helm repo add awx-operator https://ansible-community.github.io/awx-operator-helm/
 helm repo update
@@ -33,6 +33,7 @@ helm upgrade \
 
 # install the awx-demo awx instance.
 # see https://github.com/ansible/awx-operator/blob/2.19.1/config/crd/bases/awx.ansible.com_awxs.yaml
+# see https://github.com/ansible-community/awx-operator-helm/blob/awx-operator-3.2.0/charts/awx-operator/crds/customresourcedefinition-awxs.awx.ansible.com.yaml
 kubectl apply -n $awx_namespace -f - <<EOF
 ---
 apiVersion: v1
@@ -52,9 +53,10 @@ spec:
 EOF
 
 # wait for awx to be available.
-$SHELL -c "while ! kubectl get service -n awx awx-demo-service >/dev/null 2>&1; do sleep 3; done"
+$SHELL -c "while ! kubectl get service -n awx $awx_name-service >/dev/null 2>&1; do sleep 3; done"
 node_ip_address="$(ip addr show dev eth0 | perl -ne '/inet (.+?)\// && print $1')"
-node_port="$(kubectl get service -n awx awx-demo-service -o json | jq -r '.spec.ports[] | .nodePort')"
+node_port="$(kubectl get service -n awx $awx_name-service -o json | jq -r '.spec.ports[] | .nodePort')"
 service_url="http://$node_ip_address:$node_port"
-$SHELL -c "while ! wget -q --spider $service_url; do sleep 3; done;"
+$SHELL -c "until kubectl get -n $awx_namespace awx/$awx_name -o jsonpath='{.status.conditions[?(@.type==\"Running\")].status},{.status.conditions[?(@.type==\"Successful\")].status}' | grep -q 'True,True'; do sleep 15; done"
+$SHELL -c "while ! wget -q --user admin --password admin --spider $service_url/api/v2/ping/; do sleep 3; done;"
 echo "AWX demo running at $service_url"

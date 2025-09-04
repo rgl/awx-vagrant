@@ -11,7 +11,7 @@ wget -qO $tgz "$nerdctl_url"
 
 # install.
 # see https://github.com/containerd/nerdctl/blob/master/docs/config.md
-# see https://docs.k0sproject.io/v1.33.3+k0s.0/runtime/
+# see https://docs.k0sproject.io/v1.33.4+k0s.0/runtime/
 tar xf $tgz -C /usr/local/bin nerdctl
 rm $tgz
 install -d /etc/nerdctl
