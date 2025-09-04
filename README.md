@@ -14,7 +14,7 @@ Bring up the `awx` vagrant environment (here it takes about 20m to be ready, but
 time vagrant up --provider=libvirt --no-destroy-on-error --no-tty
 ```
 
-Access AWX at the returned endpoint. For example:
+Access AWX at the returned endpoint. For example, at:
 
 http://192.168.121.42:30080
 
@@ -23,6 +23,14 @@ Use the `admin`/`admin` credentials.
 Select one of the Templates and click their Launch (rocket icon) button to execute a playbook.
 
 Follow the next section to manually configure AWX in a similar way as the [awx.yml playbook](playbooks/project/awx.yml).
+
+Access the AWX REST API Browser. For example, at:
+
+http://192.168.121.42:30080/api/
+
+The API schema swagger document is available at:
+
+https://s3.amazonaws.com/awx-public-ci-files/release_4.6/schema.json
 
 List this repository dependencies (and which have newer versions):
 
