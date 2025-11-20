@@ -8,7 +8,7 @@ fi
 # see https://pypi.org/project/ansible-runner/
 # see https://github.com/ansible/ansible-runner
 # renovate: datasource=pypi depName=ansible-runner
-ansible_runner_version='2.4.1'
+ansible_runner_version='2.4.2'
 
 # see https://quay.io/repository/fedora/fedora?tab=tags
 # renovate: datasource=docker depName=fedora registryUrl=https://registry.fedoraproject.org
